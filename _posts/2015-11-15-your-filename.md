@@ -4,13 +4,13 @@ published: false
 
 
 Rendering HTML just on server side feels so akward in 2015. Universal apps quickly gain popularity, and it feels like people start using React even for almost static landing pages, not just for rich web apps.
-In this landscape, traditional server-side frameworks like Ruby start to fret. I had my own share of shivers down my spine, being a developer of a PHP CMS: how relevant is what we do to this hipster React/Node/Mongo world?
+In this landscape, traditional server-side frameworks like Ruby on Rails start to fret. I had my own share of shivers down my spine, being a developer of a PHP CMS: how relevant is what we do to this hipster React/Node/Mongo world?
 
 ## The problem
 Two month ago we at SFI agreed to help our friends with a little semi-scientific religious study project: build a simple worldview test. The idea is simple: you have a list of questions, every question is answered by represententives of different worldviews, and you have to make a blind choice based on what they said.
 
 Initially I thought to do all the heavy-lifting at server-side with Neos, and only add a little jQuery spaghetti on the client.
-But as the project UI requirements grew, I quickly realised that the amount of required spaghetti jQuery code is way more than my poor head can manage, so I needed more rational approach to managing UI state. Lucklily I had just started to learn ReactJS ans Redux at Yandex Interface Development School, and they seemed like a perfect fit for managing UI in a predictable way.
+But as the project UI requirements grew, I quickly realised that the amount of required spaghetti jQuery code is way more than my poor head can manage, so I needed more rational approach to managing UI state. Luckily I had just started to learn ReactJS and Redux at Yandex Interface Development School, and they seemed like a perfect fit for managing UI in a predictable way.
 
 It took me a few days to build a working UI prototype, and I really liked the taste of developer experience with React. Now I needed to store content somewhere and let editors modify it.
 
@@ -44,16 +44,16 @@ Neos Content Repository allows you to store different variants of the same node 
 So having data in place, now is the time to collect it and render it to JSON, for our React app to consume it later.
 Neos has a dedicated configuration language for configuring content rendering called TypoScript, it takes a bit of time getting used to, but once you learn it you are guranteed to fall in love with it. Here is a typoscript file that defines our Json API: https://github.com/sfi-ru/EncultDistr/blob/master/Packages/Sites/Sfi.Encult/Resources/Private/TypoScript/Json.ts2#L129
 Basically we just map the properties of our model to related fields in our API, and render to JSON with `@process.1 = ${Json.stringify(value)}`.
-Explaining how TypoScript works is outside the scope of this article, but head to officila docs and you will find that it's actually not that hard to master: http://neos.readthedocs.org/en/stable/CreatingASite/TypoScript/InsideTypoScript.html
+Explaining how TypoScript works is outside the scope of this article, but head to official docs and you will find that it's actually not that hard to master: http://neos.readthedocs.org/en/stable/CreatingASite/TypoScript/InsideTypoScript.html
 
-Also take note, that for each API enpoint we define a custom caching rule, that tells in what circumstance to invalidate the cache.
+Also take note, that for each API endpoint we define a custom caching rule, that tells in what circumstance to invalidate the cache. `(NOTE: I'm not sure if this information is necessary, since someone who can't read TypoScript wouldn't understand the rest of the TS file neither :) )`
 
 All that's left is to point our React/Redux app to relevant API urls: https://github.com/sfi-ru/encultN/blob/master/app/redux/api.js#L12
 
 ### Updating content
 But fetching content is not all that we can achive with Neos, we can also define a classic MVC controller for handling actions that require data manipulation. In this case we needed an action to vote for a certain answer: https://github.com/sfi-ru/EncultDistr/blob/master/Packages/Sites/Sfi.Encult/Classes/Sfi/Encult/Controller/VoteController.php#L48
 
-Flow provides a support lot of powerful stuff like DDD, Doctrine ORM, DI, routing, configuratin and many more, so be sure you'll have some power when your API would need it.
+Flow provides a support lot of powerful stuff like DDD, Doctrine ORM, DI, routing, configuratin and many more, so be sure you'll have some power when your API would need it. `(NOTE: Maybe mention again that Flow is the underlying framework, since it's just one bullet point at the beginning)`
 
 ### Docker containerization
 At first I was reluctant to use two completely different stacks on the server (PHP and NodeJS). Instinctively I felt that it might turn into a hosting and deployment hell.
@@ -71,7 +71,7 @@ Neos API part was mostly stable during the whole project, and undergone quite fe
 
 So I must say that idea of combining best from two worlds, solid content managment with modern web apps really payed off.
 
-The whole thing is running pretty fast on a 5$ Digital Ocean plan. I get about 120ms response from Neos API and 350ms TTFB for the whole app. The app feels very responsive thanks to server-side rendering: it does not have to wait for JS code to load, and time to paint is under 2s.
+The whole thing is running pretty fast on a 5$ Digital Ocean plan. I get about 120ms response from Neos API and 350ms TTFB for the whole app. The app feels very responsive thanks to server-side rendering: it does not have to wait for JS code to load, and time to paint is under 2s. `(NOTE: the part about server-side-rendering is a bit confusing for me. I thought Neos is just the data repository and React is handling the JSON and taking care of the rendering)`
 
 But the thing that makes my heart most warm every time I integrate Neos in any project, is contemplating the editors happiness, and I'm really glad that I can retain this experince even in a cold single page application world =)
 
